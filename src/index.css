@@ -5,3 +5,25 @@ body {
     margin-top: 5rem;
     background-color: lightblue;
 }
+
+svg {
+    background-color: white;
+}
+
+.labels {
+    font-size: 1.3em;
+    max-width: 0.5rem;
+    word-wrap: break-word;
+}
+
+@media (max-width: 1024px) {
+    .labels {
+        font-size: 0.8em;
+    }
+}
+
+@media (max-width: 640px) {
+    .labels {
+        font-size: 0.45em;
+    }
+}

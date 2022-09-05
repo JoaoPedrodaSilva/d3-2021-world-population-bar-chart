@@ -4,15 +4,27 @@ import { csv, scaleBand, scaleLinear, max } from "d3"
 export const App = () => {
     //states
     const [data, setData] = useState(null)
-    const [svgWidth, setSvgWidth] = useState(window.innerWidth * 0.7) //for responsivity
-    const [svgHeight, setSvgHeight] = useState(window.innerHeight * 0.7) //for responsivity
+    const [width, setWidth] = useState(null)
+    const [height, setHeight] = useState(null)
+    const [margin, setMargin] = useState(null)
 
 
     //for responsivity
+    useEffect(() => {
+        handleResize()
+    }, [])
+
     const handleResize = () => {
-        setTimeout(() => setSvgWidth(window.innerWidth * 0.7), 10)
-        setTimeout(() => setSvgHeight(window.innerHeight * 0.7), 10)
+        setTimeout(() => setWidth(window.innerWidth * 0.8), 5)
+        setTimeout(() => setHeight(window.innerHeight * 0.8), 5)
+        setTimeout(() => setMargin({
+            top: window.innerHeight * 0.05,
+            right: window.innerWidth * 0.05,
+            bottom: window.innerHeight * 0.05,
+            left: window.innerWidth * 0.18
+        }), 5)
     }
+
     window.addEventListener('resize', handleResize)
 
 
@@ -33,36 +45,69 @@ export const App = () => {
     }, [])
 
 
-    //render no data
+    //render in case of no data
     if (!data) {
         return <pre>Loading...</pre>
     }
 
 
-
-
     //scales
     const yScale = scaleBand()
         .domain(data.map(d => d.country))
-        .range([0, svgHeight])
+        .range([0, height - margin.top - margin.bottom])
 
     const xScale = scaleLinear()
         .domain([0, max(data, d => d.population)])
-        .range([0, svgWidth])
+        .range([0, width - margin.right - margin.left])
 
 
     //render bar chart
     return (
-        <svg width={svgWidth} height={svgHeight}>
-            {data.map((d, i) => (
-                <rect
-                    key={i}
-                    x={0}
-                    y={yScale(d.country)}
-                    width={xScale(d.population)}
-                    height={yScale.bandwidth()}
-                />
-            ))}
+        <svg width={width} height={height}>
+            <g transform={`translate(${margin.left}, ${margin.top})`}>
+
+                {/* tick marks and labels  */}
+                {xScale.ticks().map((tick, index) => ( //used .ticks() because xScale is scaleLinear
+                    <g key={index} transform={`translate(${xScale(tick)}, 0)`}>
+                        <line
+                            y2={height - margin.top - margin.bottom}
+                            stroke="gray"
+                        />
+                        <text
+                            className="labels"
+                            y={height - margin.top - margin.bottom}
+                            style={{ textAnchor: "middle" }}
+                            dy="1.2em"
+                        >
+                            {tick}
+                        </text>
+                    </g>
+                ))}
+
+                {yScale.domain().map((tick, index) => ( //used .domain() because yScale is scaleBand
+                    <g key={index} transform={`translate(0, ${yScale(tick)})`}>
+                        <text
+                            className="labels"
+                            style={{ textAnchor: "end" }} 
+                            dx="-0.3em"
+                            dy="2.2em"
+                        > {/* gotta make the label aligned to the center of the bar */}
+                            {tick} {/* gotta make every line in a row, for better reponsivity */}
+                        </text>
+                    </g>
+                ))}
+
+                {/* bars */}
+                {data.map((d, i) => (
+                    <rect
+                        key={i}
+                        x={0}
+                        y={yScale(d.country)}
+                        width={xScale(d.population)}
+                        height={yScale.bandwidth()}
+                    />
+                ))}
+            </g>
         </svg>
     );
 }
