@@ -1,12 +1,20 @@
 import { useState, useEffect } from "react";
-import { csv, scaleBand, scaleLinear, max } from "d3"
+import { scaleBand, scaleLinear, max } from "d3"
+import { useFetchData } from "./useFetchData";
+import { useDataContext } from "./dataContext";
+import { AxisBottom } from "./components/AxisBottom";
+import { AxisLeft } from "./components/AxisLeft";
+import { Marks } from "./components/Marks";
+
 
 export const App = () => {
-    //states
-    const [data, setData] = useState(null)
+    //states and variables
+    const { data } = useDataContext()
     const [width, setWidth] = useState(null)
     const [height, setHeight] = useState(null)
     const [margin, setMargin] = useState(null)
+    const xAccessor = d => d.population
+    const yAccessor = d => d.country
 
 
     //for responsivity
@@ -20,7 +28,7 @@ export const App = () => {
         setTimeout(() => setMargin({
             top: window.innerHeight * 0.05,
             right: window.innerWidth * 0.05,
-            bottom: window.innerHeight * 0.05,
+            bottom: window.innerHeight * 0.10,
             left: window.innerWidth * 0.18
         }), 5)
     }
@@ -28,21 +36,8 @@ export const App = () => {
     window.addEventListener('resize', handleResize)
 
 
-    //fetch and treat data
-    useEffect(() => {
-        let preliminaryData = []
-        csv("https://gist.githubusercontent.com/JoaoPedrodaSilva/beeec3f2b578f87ccb803e7f5420ea74/raw/7e6a1dc899fe17c1809493c1a6b57085eb6deb6d/2021-UN-Population.csv")
-            .then(response => {
-                response.map(row => (
-                    preliminaryData.push(
-                        {
-                            country: row.Country,
-                            population: Number(row["Population (thousands)"])
-                        })
-                ))
-                setData(preliminaryData.slice(0, 10))
-            })
-    }, [])
+    //fetch data
+    useFetchData()
 
 
     //render in case of no data
@@ -53,11 +48,12 @@ export const App = () => {
 
     //scales
     const yScale = scaleBand()
-        .domain(data.map(d => d.country))
+        .domain(data.map(yAccessor))
         .range([0, height - margin.top - margin.bottom])
+        .paddingInner(0.1)
 
     const xScale = scaleLinear()
-        .domain([0, max(data, d => d.population)])
+        .domain([0, max(data, xAccessor)])
         .range([0, width - margin.right - margin.left])
 
 
@@ -65,48 +61,15 @@ export const App = () => {
     return (
         <svg width={width} height={height}>
             <g transform={`translate(${margin.left}, ${margin.top})`}>
-
-                {/* tick marks and labels  */}
-                {xScale.ticks().map((tick, index) => ( //used .ticks() because xScale is scaleLinear
-                    <g key={index} transform={`translate(${xScale(tick)}, 0)`}>
-                        <line
-                            y2={height - margin.top - margin.bottom}
-                            stroke="gray"
-                        />
-                        <text
-                            className="labels"
-                            y={height - margin.top - margin.bottom}
-                            style={{ textAnchor: "middle" }}
-                            dy="1.2em"
-                        >
-                            {tick}
-                        </text>
-                    </g>
-                ))}
-
-                {yScale.domain().map((tick, index) => ( //used .domain() because yScale is scaleBand
-                    <g key={index} transform={`translate(0, ${yScale(tick)})`}>
-                        <text
-                            className="labels"
-                            style={{ textAnchor: "end" }} 
-                            dx="-0.3em"
-                            dy="2.2em"
-                        > {/* gotta make the label aligned to the center of the bar */}
-                            {tick} {/* gotta make every line in a row, for better reponsivity */}
-                        </text>
-                    </g>
-                ))}
-
-                {/* bars */}
-                {data.map((d, i) => (
-                    <rect
-                        key={i}
-                        x={0}
-                        y={yScale(d.country)}
-                        width={xScale(d.population)}
-                        height={yScale.bandwidth()}
-                    />
-                ))}
+                <AxisBottom xScale={xScale} height={height} margin={margin} />
+                <AxisLeft yScale={yScale} />
+                <text
+                    className="x-label"
+                    x={(width - margin.left - margin.right) / 2}
+                    y={(height - margin.top - margin.bottom) + 50}
+                    textAnchor="middle"
+                >Population (thousands)</text>
+                <Marks xScale={xScale} yScale={yScale} xAccessor={xAccessor} yAccessor={yAccessor} />
             </g>
         </svg>
     );

@@ -3,27 +3,52 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 5rem;
-    background-color: lightblue;
+    background-color: #137b80;
+    font-family: 'Poppins', sans-serif;
 }
 
 svg {
     background-color: white;
 }
 
-.labels {
-    font-size: 1.3em;
-    max-width: 0.5rem;
-    word-wrap: break-word;
+.tick line {
+    stroke: #c0c0bb 
+}
+
+.tick text {
+    fill: #635f5d;
+    font-size: 1.1em;
 }
 
 @media (max-width: 1024px) {
-    .labels {
-        font-size: 0.8em;
+    .tick text {
+        font-size: 0.6em;
     }
 }
 
 @media (max-width: 640px) {
-    .labels {
-        font-size: 0.45em;
+    .tick text {
+        font-size: 0.35em;
+    }
+}
+
+.mark {
+    fill: #137b80
+}
+
+.x-label {
+    font-size: 1.1rem;
+    fill: #635f5d;
+}
+
+@media (max-width: 1024px) {
+    .x-label {
+        font-size: 0.6em;
+    }
+}
+
+@media (max-width: 640px) {
+    .x-label {
+        font-size: 0.35em;
     }
 }
