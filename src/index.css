@@ -15,40 +15,53 @@ svg {
     stroke: #c0c0bb 
 }
 
-.tick text {
+.tick text, .title, .source, .source a {
     fill: #635f5d;
-    font-size: 1.1em;
 }
 
+.tick text {
+    font-size: 1.1rem;
+}
 @media (max-width: 1024px) {
     .tick text {
-        font-size: 0.6em;
+        font-size: 0.6rem;
+    }
+}
+@media (max-width: 640px) {
+    .tick text {
+        font-size: 0.35rem;
+    }
+}
+
+.title {
+    font-size: 2rem;
+}
+@media (max-width: 1024px) {
+    .title {
+        font-size: 1.5rem;
+    }
+}
+@media (max-width: 640px) {
+    .title {
+        font-size: 1rem;
+    }
+}
+
+.source {
+    font-size: 0.8rem;
+}
+@media (max-width: 1024px) {
+    .source {
+        font-size: 0.6rem;
     }
 }
 
 @media (max-width: 640px) {
-    .tick text {
-        font-size: 0.35em;
+    .source {
+        font-size: 0.4rem;
     }
 }
 
 .mark {
     fill: #137b80
-}
-
-.x-label {
-    font-size: 1.1rem;
-    fill: #635f5d;
-}
-
-@media (max-width: 1024px) {
-    .x-label {
-        font-size: 0.6em;
-    }
-}
-
-@media (max-width: 640px) {
-    .x-label {
-        font-size: 0.35em;
-    }
 }

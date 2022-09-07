@@ -13,7 +13,7 @@ export const useFetchData = () => {
                     preliminaryData.push(
                         {
                             country: row.Country,
-                            population: Number(row["Population (thousands)"])
+                            population: Number(row["Population (thousands)"]) * 1000
                         })
                 ))
                 setData(preliminaryData.slice(0, 10))

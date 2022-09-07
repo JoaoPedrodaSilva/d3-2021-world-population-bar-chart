@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { scaleBand, scaleLinear, max } from "d3"
+import { scaleBand, scaleLinear, max, format } from "d3"
 import { useFetchData } from "./useFetchData";
 import { useDataContext } from "./dataContext";
 import { AxisBottom } from "./components/AxisBottom";
 import { AxisLeft } from "./components/AxisLeft";
 import { Marks } from "./components/Marks";
+import { Title } from "./components/Title";
+import { Source } from "./components/Source"
 
 
 export const App = () => {
@@ -15,6 +17,7 @@ export const App = () => {
     const [margin, setMargin] = useState(null)
     const xAccessor = d => d.population
     const yAccessor = d => d.country
+    const xAccessorTickFormat = tick => format(".2s")(tick).replace("G", "B")
 
 
     //for responsivity
@@ -26,10 +29,10 @@ export const App = () => {
         setTimeout(() => setWidth(window.innerWidth * 0.8), 5)
         setTimeout(() => setHeight(window.innerHeight * 0.8), 5)
         setTimeout(() => setMargin({
-            top: window.innerHeight * 0.05,
+            top: window.innerHeight * 0.1,
             right: window.innerWidth * 0.05,
-            bottom: window.innerHeight * 0.10,
-            left: window.innerWidth * 0.18
+            bottom: window.innerHeight * 0.08,
+            left: window.innerWidth * 0.2
         }), 5)
     }
 
@@ -61,15 +64,35 @@ export const App = () => {
     return (
         <svg width={width} height={height}>
             <g transform={`translate(${margin.left}, ${margin.top})`}>
-                <AxisBottom xScale={xScale} height={height} margin={margin} />
-                <AxisLeft yScale={yScale} />
-                <text
-                    className="x-label"
-                    x={(width - margin.left - margin.right) / 2}
-                    y={(height - margin.top - margin.bottom) + 50}
-                    textAnchor="middle"
-                >Population (thousands)</text>
-                <Marks xScale={xScale} yScale={yScale} xAccessor={xAccessor} yAccessor={yAccessor} />
+                <Title
+                    width={width}
+                    margin={margin}
+                />
+
+                <AxisBottom
+                    xScale={xScale}
+                    height={height}
+                    margin={margin}
+                    tickFormat={xAccessorTickFormat}
+                />
+
+                <AxisLeft
+                    yScale={yScale}
+                />
+
+                <Marks
+                    xScale={xScale}
+                    yScale={yScale}
+                    xAccessor={xAccessor}
+                    yAccessor={yAccessor}
+                    tooltipFormat={xAccessorTickFormat}
+                />
+
+                <Source
+                    width={width}
+                    height={height}
+                    margin={margin}
+                />
             </g>
         </svg>
     );

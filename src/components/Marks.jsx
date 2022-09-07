@@ -1,8 +1,8 @@
 import React from 'react'
 import { useDataContext } from '../dataContext'
 
-export const Marks = ({ xScale, yScale, xAccessor, yAccessor }) => {
-    const {data} = useDataContext()
+export const Marks = ({ xScale, yScale, xAccessor, yAccessor, tooltipFormat }) => {
+    const { data } = useDataContext()
 
     return (
         data.map((d, i) => (
@@ -13,7 +13,9 @@ export const Marks = ({ xScale, yScale, xAccessor, yAccessor }) => {
                 y={yScale(yAccessor(d))}
                 width={xScale(xAccessor(d))}
                 height={yScale.bandwidth()}
-            />
+            >
+                <title>{tooltipFormat(xAccessor(d))}</title>
+            </rect>
         ))
     )
 }
