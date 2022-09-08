@@ -1,4 +1,3 @@
-import React from 'react'
 import { useDataContext } from '../dataContext'
 
 export const Marks = ({ xScale, yScale, xAccessor, yAccessor, tooltipFormat }) => {
@@ -7,8 +6,8 @@ export const Marks = ({ xScale, yScale, xAccessor, yAccessor, tooltipFormat }) =
     return (
         data.map((d, i) => (
             <rect
+                style={{ fill: "#137b80"}}
                 key={i}
-                className="mark"
                 x={0}
                 y={yScale(yAccessor(d))}
                 width={xScale(xAccessor(d))}

@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react'
+import { createContext, useState, useContext } from 'react'
 
-const DataContext = React.createContext()
+const DataContext = createContext()
 
 const DataProvider = ({ children }) => {
     const [data, setData] = useState(null)
